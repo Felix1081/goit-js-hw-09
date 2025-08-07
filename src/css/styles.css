@@ -16,3 +16,31 @@
 @import url('./badges.css');
 @import url('./back-link.css');
 @import url('./footer.css');
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 24px 156px 0 156px;
+  margin: 0;
+  list-style: none;
+}
+
+.gallery-item {
+  flex-basis: calc((100% - 32px) / 3);
+  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+}
+
+.gallery-item img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gallery-item img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  cursor: url(/png/bxs_hand-down.png), pointer;
+}
