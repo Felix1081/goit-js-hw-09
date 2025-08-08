@@ -5,51 +5,50 @@ let formData = {
   message: '',
 };
 
-formEl.addEventListener('input', e => {
-  if (e.target.nodeName !== 'INPUT' && e.target.nodeName !== 'TEXTAREA') return;
-
-  const email = e.currentTarget.elements.email.value;
-  const message = e.currentTarget.elements.message.value;
-
-  formData.email = email;
-  formData.message = message;
-
-  saveToLS('feedback-form-state', formData);
-  console.log(formData);
-});
-
-formEl.addEventListener('submit', event => {
-  event.preventDefault();
-  if (!formData.email || !formData.message) {
-    alert('Fill please all fields');
-  } else {
-    console.log(formData);
-    localStorage.removeItem(localStorageKey);
-    formEl.reset();
-    formData = { email: '', message: '' };
-  }
-});
-
 document.addEventListener('DOMContentLoaded', () => {
-  const lsData = getFromLS('feedback-form-state');
+  const lsData = getFromLS(localStorageKey);
 
   if (lsData && lsData.email && lsData.message) {
     formEl.elements.email.value = lsData.email;
     formEl.elements.message.value = lsData.message;
+    formData = { ...lsData };
   }
+
+  formEl.addEventListener('input', onInput);
+  formEl.addEventListener('submit', onSubmit);
 });
 
-function saveToLS(key, value) {
-  const jsonData = JSON.stringify(value);
-  localStorage.setItem(key, jsonData);
+function onInput(e) {
+  if (e.target.nodeName !== 'INPUT' && e.target.nodeName !== 'TEXTAREA') return;
+
+  formData.email = formEl.elements.email.value;
+  formData.message = formEl.elements.message.value;
+
+  saveToLS(localStorageKey, formData);
 }
 
-function getFromLS(key, defaultValue) {
-  const jsonData = localStorage.getItem(key);
+function onSubmit(event) {
+  event.preventDefault();
+
+  if (!formData.email.trim() || !formData.message.trim()) {
+    alert('Fill please all fields');
+    return;
+  }
+
+  console.log(formData);
+  localStorage.removeItem(localStorageKey);
+  formEl.reset();
+  formData = { email: '', message: '' };
+}
+
+function saveToLS(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function getFromLS(key, defaultValue = null) {
   try {
-    const data = JSON.parse(jsonData);
-    return data;
+    return JSON.parse(localStorage.getItem(key)) ?? defaultValue;
   } catch {
-    return defaultValue || jsonData;
+    return defaultValue;
   }
 }
